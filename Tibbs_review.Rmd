@@ -1,0 +1,103 @@
+---
+title: "Tibbs_review"
+author: "Laura Tibbs"
+date: "October 12, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Review of BCB 546X R Assignment for Anderson Verzegnazzi
+
+## Positive points:
+
+### Overall: 
+
+* The code ran on my computer and produced output (graphs and sorted genotype fileS). It did throw several warnings, but it did run.
+
+* Each data processing step was labeled in text, though the code itself was not commented at all outside of the Data Inspection segment.
+
+### Data inspection:
+
+* The data files were inspected with code to show dimension and class.
+
+### Output files:
+
+* Teosinte and maize were successfully separated out.
+
+* 40 output files were produced and named as requested. 
+
+* Missing data was encoded as requested. 
+
+### Graphs: 
+
+* The "SNPs per chromosome" graph did show the total SNPs per chromosome.
+
+* The "Missing data and amount of heterozygosity" graph did show the proportion of homozygous sites by species.
+
+
+## Problems/Suggestions for improvement:
+
+### Overall:
+
+* The organization of the repository is somewhat confusing. It contains not only files related to this assignment but also class notes ("R lesson 3.Rmd", "R lesson 4.Rmd", and "R lesson 5.Rmd"). In addition, the output, input, and source files are not organized into any subfolders.
+
+### Data inspection:
+
+* The data inspection section did not have any text describing the data, only code.
+
+* File size was not found, as requested in the assignment sheet.
+
+### Output files: 
+
+* The ascending and descending files were not sorted by position correctly; for example, in the ascending files, 150749370 came before 157104 which came before 161472433. In the descending files, 87911166 came before 8510027 which came before 83595286. It appears that the files were sorted alphabetically rather than numerically. They needed to be converted to numeric, for example using `as.numeric()` before sorting.
+
+* The samples have lost their names in the output files; instead of species names at the top of each column, there are only numbers in the top row of each file. The problem here appears to be that the Sample_ID was removed when producing the intermediate file `fang.extracted` from the original genotype data in `fang`, and the Sample_ID was never returned to the data files. (Code where this happened is below, with my comments added):
+
+```{r eval=F}
+fang.extracted <- fang[,3:986] # this removed Sample_ID and JG_OTU from the dataset, so all later data is missing Sample_ID
+```
+
+### Graphs:
+
+There was no graph for the "your own visualization" part of the assignment.
+
+The SNP per chromosome graph:
+
+  * The assignment asked which groups contribute most of these SNPs, but neither the graph nor the text answered this question. 
+  
+  * All of the SNPs were included, rather than only those SNPs that varied WITHIN a group; this, however, was not actually in the assignment originally but only clarified on Slack later. 
+  
+  * Something seems to have gone wrong with the data processing, because the original `snp_position.txt` file (read in as `snp_position` in the code) only has Chromosome values 1-10 as well as multiple and unknown (see below), but the graph also has a chromosome "NA" in addition to these. Some information appears to have been lost or changed somewhere to cause this.
+  
+```{r}
+library(tidyverse)
+  snp_position <- read.delim("snp_position.txt")
+
+  levels(snp_position$Chromosome)
+```
+
+The missing data and amount of heterozygosity graphs:
+
+  * The graph showed that none of the SNPs had missing (NA) values, which can be seen not to be the case in the original genotype file (`fang_et_al_genotypes.txt` read in as `fang`):
+  
+```{r}
+fang <- read.delim("fang_et_al_genotypes.txt")
+head(as.tibble(fang))
+```
+
+    * As shown above, there are missing values already in the first SNP, abph1.20. It seems that this problem of not counting any NA values was introduced at this part of their code (code below from their R_Homework.Rmd, comments added by me to explain the problems): 
+
+``` {r eval=F}
+library(plyr)
+fang.tidy$hom.het <- (fang.tidy$value=="A/A"|fang.tidy$value=="C/C"|fang.tidy$value=="G/G"|fang.tidy$value=="T/T") # this coded all homozygous alleles as TRUE in the column hom.het; all other values (BOTH heterozygous and NA) will be coded as FALSE; the information about which SNPs are actually NA is lost here.
+fang.class.sorted<-arrange(fang.tidy,Sample_ID,Group) 
+counts <- ddply(fang.class.sorted,c("Sample_ID"),summarise,total_homozygous=sum(hom.het,na.rm=TRUE),total_heterozygous=sum(!hom.het,na.rm = TRUE), total_NA=sum(is.na(hom.het))) # This set total_homozygous as the sum of TRUE values in the hom.het column; this makes sense. However, it then sets the total_heterozygous as the sum of all FALSE values in the hom.het column, which as seen above actually represented BOTH heterozygous AND NA SNPs. Finally, total_NA is set to the number of hom.het values that have NA values, but as seen above, ALL values were coded as TRUE or FALSE, leaving none to be counted as NA.
+counts.combined<-melt(counts,measure.vars = c("total_homozygous","total_heterozygous","total_NA"))  
+```
+
+  * The only graph here shows the proportions of missing data and heterozygosity for species; there is no graph showing group as requested in the assignment.
+  
+  
