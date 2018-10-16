@@ -1,0 +1,22 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+##  Comments for PartI
+1 Very organized and clear descriptions of each step. Not restricted to the commands that we learned in the class.
+
+2 In step 5, althouth you indicate that you are going to remove snps with "unknown" and "multiple" positions, there is no commands used to remove "multiple" (only snps with "unknown" were deleted). With "multiple" removed, there should be 939 objects (not 950) in both teosinte.joined and maize.joined files.
+
+  
+## Comments for PartII
+
+1 for the second graph, I think you need to "Group" the fang.tidy file based on the name of the 3rd column (Group) and then subset the file again based on homozygous, heterozygous, NA etc. The marks on x axis should be something like "TRIPS, ZDIPL, ZPERR" etc.
+
+2 don't forget you need to create a graph based on what characterics you are interested (the last secentence in the R assignment).
+
+Dandan
+
+
+
+Dandan
