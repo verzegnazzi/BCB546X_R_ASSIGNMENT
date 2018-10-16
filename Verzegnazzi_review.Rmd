@@ -1,0 +1,20 @@
+---
+title: "Verzegnazzi_review.Rmd"
+author: "Anderson Verzegnazzi"
+date: "October 14, 2018"
+output: html_document
+---
+
+### Dear Jose,
+Thank you for sharing your R codes.  
+It's clearly that you are very familiar with R tools, and had a great understanding of the steps, for genotypic data analyzing, covered in class. 
+Your codes also run smoothly and perfectly in my computer.   
+The markdown file is well organized, and each step is well explained, making it clearly and useful for future use of the code.
+Unfortunately, I do not have additional suggestion for your work.
+Thanks,
+Anderson
+####
+
+
+
+
